@@ -2,6 +2,7 @@ import curses
 import math
 import random
 import time
+from termios import IEXTEN
 
 
 def main(stdscr):
@@ -192,9 +193,6 @@ def main(stdscr):
                 if mapa[int(cy)][int(cx)] == 1:
                     hit = 1
                     break
-                if mapa[int(cy)][int(cx)] == 2:
-                    hit = 2
-                    break
 
             dist = dist * math.cos(ra - pa)
             if dist < 0.1:
@@ -218,15 +216,50 @@ def main(stdscr):
                     color = curses.color_pair(5)
                 elif dist > 40:
                     color = curses.color_pair(4)
+            if hit != 0:
+                if hit == 1:
+                    for y in range(start, end):
+                        try:
+                            stdscr.addch(y, ix, ch, color)
+                        except curses.error:
+                            pass
+        startx = mx // 4
+        endx = 3 * startx
+        for j in range(startx, endx):
+            hit = 0
+            ch = " "
+            color = curses.color_pair(0)
+            ra = (pa - vf / 2) + (j / mx) * vf
+            dist = 0
+            while True:
+                dist += 0.05
+                ox = px + math.cos(ra) * dist
+                oy = py + math.sin(ra) * dist
+                if int(ox) < 0 or int(ox) >= 50 or int(oy) < 0 or int(oy) >= 50:
+                    break
+                if mapa[int(oy)][int(ox)] == 2:
+                    hit = 2
+                    break
+            dist = dist * math.cos(ra - pa)
+
+            if dist < 0.1:
+                dist = 0.1
+            wall_h = int(my / dist)
+            start = int((my - wall_h) / 2) - my // 4
+            end = int((my + wall_h) / 2) - my // 4
+            if start < 0:
+                start = 0
+            if end >= my:
+                end = my - 1
             if hit == 2:
                 ch = "@"
                 color = curses.color_pair(1)
-            if hit != 0:
                 for y in range(start, end):
                     try:
-                        stdscr.addch(y, ix, ch, color)
+                        stdscr.addch(y, j, ch, color)
                     except curses.error:
                         pass
+
         dx = px + math.cos(pa) * shot_dist
         dy = py + math.sin(pa) * shot_dist
         if mapa[int(dy)][int(dx)] != 1 and mapa[int(dy)][int(dx)] != 2:
