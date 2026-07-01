@@ -8,6 +8,16 @@ def main(stdscr):
     curses.curs_set(0)
     stdscr.nodelay(True)
     curses.start_color()
+    curses.init_color(31, 900, 900, 0)
+    curses.init_color(32, 700, 700, 0)
+    curses.init_color(33, 500, 500, 0)
+    curses.init_color(34, 300, 300, 0)
+    curses.init_color(35, 100, 100, 0)
+    curses.init_pair(20, 31, curses.COLOR_BLACK)
+    curses.init_pair(21, 32, curses.COLOR_BLACK)
+    curses.init_pair(22, 33, curses.COLOR_BLACK)
+    curses.init_pair(23, 34, curses.COLOR_BLACK)
+    curses.init_pair(24, 35, curses.COLOR_BLACK)
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(9, curses.COLOR_BLACK, curses.COLOR_GREEN)
@@ -22,6 +32,16 @@ def main(stdscr):
     curses.init_pair(6, 16, curses.COLOR_BLACK)
     curses.init_pair(7, 17, curses.COLOR_BLACK)
     curses.init_pair(8, 18, curses.COLOR_BLACK)
+    curses.init_color(19, 900, 0, 0)
+    curses.init_color(20, 700, 0, 0)
+    curses.init_color(21, 500, 0, 0)
+    curses.init_color(22, 300, 0, 0)
+    curses.init_color(23, 100, 0, 0)
+    curses.init_pair(10, 19, curses.COLOR_BLACK)
+    curses.init_pair(11, 20, curses.COLOR_BLACK)
+    curses.init_pair(12, 21, curses.COLOR_BLACK)
+    curses.init_pair(13, 22, curses.COLOR_BLACK)
+    curses.init_pair(14, 23, curses.COLOR_BLACK)
     my, mx = stdscr.getmaxyx()
     px = 25
     py = 25
@@ -198,14 +218,14 @@ def main(stdscr):
             if dist < 0.1:
                 dist = 0.1
             wall_h = int(my / dist)
-            start = int((my - wall_h) / 2) - my // 4
-            end = int((my + wall_h) / 2) - my // 4
+            start = int((my - wall_h) / 2)
+            end = int((my + wall_h) / 2)
             if start < 0:
                 start = 0
             if end >= my:
                 end = my - 1
             if hit == 1:
-                ch = "▓"
+                ch = "┼"
                 if dist <= 10 and dist >= 0:
                     color = curses.color_pair(4)
                 elif dist > 10 and dist <= 20:
@@ -216,11 +236,40 @@ def main(stdscr):
                     color = curses.color_pair(7)
                 elif dist > 40:
                     color = curses.color_pair(8)
+
             if hit != 0:
                 if hit == 1:
-                    for y in range(start, end):
+                    for y_mid in range(start, end):
                         try:
-                            stdscr.addch(y, ix, ch, color)
+                            stdscr.addch(y_mid, ix, ch, color)
+                        except curses.error:
+                            pass
+                    for y_end in range(end, my):
+                        h = 0.5
+                        vfvert = vf * (my / mx) * 2.0
+                        delta_y = y_end - (my // 2)
+                        beta = (delta_y / (my // 2)) * (vfvert / 2)
+                        if beta <= 0 or math.isclose(beta, 0):
+                            beta = 999.0
+                        else:
+                            dist2d = h / (math.tan(beta))
+                        fx = px + math.cos(ra) * dist2d
+                        fy = py + math.sin(ra) * dist2d
+                        dist3d = math.sqrt(
+                            ((fx - px) ** 2) + ((fy - py) ** 2) + (h * 2)
+                        )
+                        if dist3d <= 5 and dist3d >= 0:
+                            color_floor = curses.color_pair(20)
+                        elif dist3d > 5 and dist3d <= 10:
+                            color_floor = curses.color_pair(21)
+                        elif dist3d > 10 and dist3d <= 15:
+                            color_floor = curses.color_pair(22)
+                        elif dist3d > 15 and dist3d <= 20:
+                            color_floor = curses.color_pair(23)
+                        elif dist3d > 20:
+                            color_floor = curses.color_pair(24)
+                        try:
+                            stdscr.addch(y_end, ix, "█", color_floor)
                         except curses.error:
                             pass
 
@@ -247,15 +296,28 @@ def main(stdscr):
             if dist < 0.1:
                 dist = 0.1
             wall_h = int(my / dist)
-            start = int((my - wall_h) / 2) - my // 4
-            end = int((my + wall_h) / 2) - my // 4
+            start = int((my - wall_h) / 2)
+            end = int((my + wall_h) / 2)
             if start < 0:
                 start = 0
             if end >= my:
                 end = my - 1
             if hit == 2:
-                ch = "░"
-                color = curses.color_pair(1)
+                ch = random.choice(
+                    [
+                        "░",
+                    ]
+                )
+                if dist <= 10 and dist >= 0:
+                    color = curses.color_pair(10)
+                elif dist > 10 and dist <= 20:
+                    color = curses.color_pair(11)
+                elif dist > 20 and dist <= 30:
+                    color = curses.color_pair(12)
+                elif dist > 30 and dist <= 40:
+                    color = curses.color_pair(13)
+                elif dist > 40:
+                    color = curses.color_pair(14)
                 for y in range(start, end):
                     try:
                         stdscr.addch(y, j, ch, color)
