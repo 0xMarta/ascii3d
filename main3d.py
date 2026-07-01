@@ -2,7 +2,6 @@ import curses
 import math
 import random
 import time
-from termios import IEXTEN
 
 
 def main(stdscr):
@@ -11,6 +10,7 @@ def main(stdscr):
     curses.start_color()
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(9, curses.COLOR_BLACK, curses.COLOR_GREEN)
     curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
     curses.init_color(14, 0, 900, 0)
     curses.init_color(15, 0, 700, 0)
@@ -185,7 +185,7 @@ def main(stdscr):
             ra = (pa - vf / 2) + (ix / mx) * vf
             dist = 0
             while True:
-                dist += 0.05
+                dist += 0.1
                 cx = px + math.cos(ra) * dist
                 cy = py + math.sin(ra) * dist
                 if int(cx) < 0 or int(cx) >= 50 or int(cy) < 0 or int(cy) >= 50:
@@ -205,17 +205,17 @@ def main(stdscr):
             if end >= my:
                 end = my - 1
             if hit == 1:
-                ch = "#"
+                ch = "▓"
                 if dist <= 10 and dist >= 0:
-                    color = curses.color_pair(8)
+                    color = curses.color_pair(4)
                 elif dist > 10 and dist <= 20:
-                    color = curses.color_pair(7)
+                    color = curses.color_pair(5)
                 elif dist > 20 and dist <= 30:
                     color = curses.color_pair(6)
                 elif dist > 30 and dist <= 40:
-                    color = curses.color_pair(5)
+                    color = curses.color_pair(7)
                 elif dist > 40:
-                    color = curses.color_pair(4)
+                    color = curses.color_pair(8)
             if hit != 0:
                 if hit == 1:
                     for y in range(start, end):
@@ -223,23 +223,25 @@ def main(stdscr):
                             stdscr.addch(y, ix, ch, color)
                         except curses.error:
                             pass
-        startx = mx // 4
-        endx = 3 * startx
-        for j in range(startx, endx):
+
+        for j in range(mx):
             hit = 0
             ch = " "
             color = curses.color_pair(0)
             ra = (pa - vf / 2) + (j / mx) * vf
             dist = 0
             while True:
-                dist += 0.05
+                dist += 0.1
                 ox = px + math.cos(ra) * dist
                 oy = py + math.sin(ra) * dist
                 if int(ox) < 0 or int(ox) >= 50 or int(oy) < 0 or int(oy) >= 50:
                     break
+
                 if mapa[int(oy)][int(ox)] == 2:
                     hit = 2
                     break
+                stdscr.addstr(int(oy), int(ox), ".", curses.color_pair(9))
+
             dist = dist * math.cos(ra - pa)
 
             if dist < 0.1:
@@ -252,7 +254,7 @@ def main(stdscr):
             if end >= my:
                 end = my - 1
             if hit == 2:
-                ch = "@"
+                ch = "░"
                 color = curses.color_pair(1)
                 for y in range(start, end):
                     try:
@@ -263,7 +265,7 @@ def main(stdscr):
         dx = px + math.cos(pa) * shot_dist
         dy = py + math.sin(pa) * shot_dist
         if mapa[int(dy)][int(dx)] != 1 and mapa[int(dy)][int(dx)] != 2:
-            shot_dist += 0.05
+            shot_dist += 0.1
         if mapa[int(dy)][int(dx)] == 2:
             mapa[int(dy)][int(dx)] = 0
             enemy_x = random.randint(3, 47)
