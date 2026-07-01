@@ -7,11 +7,13 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 ## Features
 
 - First-person camera
+- Collision detection
 - Raycasting renderer
 - Terminal graphics using `curses`
 - Keyboard movement
 - Adjustable field of view
 - Perspective wall rendering
+- Radar
 
 ## Controls
 
@@ -26,12 +28,12 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 ## Requirements
 
 - Python 3
-- curses (built-in on Linux/macOS)
-
+- Linux 
+- Architecture : x86_64
 ## Run
 
 ```bash
-python3 main.py
+python3 main3d.py
 ```
 
 ## How it works
@@ -53,12 +55,9 @@ The world is stored as a 2D grid.
 
 - `1` = wall
 - `0` = empty space
+- `2` = enemy
 
 ## Future improvements
-
-- Collision detection
 - Floor and ceiling shading
 - Textured walls
 - Sprites
-- Minimap
-- Better movement physics
