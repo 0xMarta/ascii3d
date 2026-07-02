@@ -236,7 +236,6 @@ def main(stdscr):
             dist = 0
             while True:
                 old_cx = px + math.cos(ra) * dist
-                old_cy = py + math.sin(ra) * dist
                 dist += 0.1
                 cx = px + math.cos(ra) * dist
                 cy = py + math.sin(ra) * dist
@@ -300,6 +299,7 @@ def main(stdscr):
                         beta = (delta_y / (my // 2)) * (vfvert / 2)
                         if beta <= 0 or math.isclose(beta, 0):
                             beta = 999.0
+                            dist2d = 999.0
                         else:
                             dist2d = h / (math.tan(beta))
                         fx = px + math.cos(ra) * dist2d
@@ -340,7 +340,10 @@ def main(stdscr):
                     break
                 if mapa[int(oy)][int(ox)] == 1:
                     break
-                stdscr.addstr(int(oy), int(ox), ".", curses.color_pair(9))
+                try:
+                    stdscr.addstr(int(oy), int(ox), ".", curses.color_pair(9))
+                except curses.error:
+                    pass
 
             dist = dist * math.cos(ra - pa)
 
@@ -409,15 +412,13 @@ def main(stdscr):
             try:
                 if c < score * 5:
                     c += 1
-                    stdscr.addstr(10, i + (mx // 2), f"*", curses.color_pair(2))
-                    stdscr.addstr(11, i + (mx // 2), f"*", curses.color_pair(2))
-                    stdscr.addstr(12, i + (mx // 2), f"*", curses.color_pair(2))
-                    stdscr.addstr(13, i + (mx // 2), f"*", curses.color_pair(2))
+                    stdscr.addstr(5, i + (mx // 2), f"*", curses.color_pair(2))
+                    stdscr.addstr(6, i + (mx // 2), f"*", curses.color_pair(2))
+                    stdscr.addstr(7, i + (mx // 2), f"*", curses.color_pair(2))
                 else:
-                    stdscr.addstr(10, i + (mx // 2), f"*", curses.color_pair(1))
-                    stdscr.addstr(11, i + (mx // 2), f"*", curses.color_pair(1))
-                    stdscr.addstr(12, i + (mx // 2), f"*", curses.color_pair(1))
-                    stdscr.addstr(13, i + (mx // 2), f"*", curses.color_pair(1))
+                    stdscr.addstr(5, i + (mx // 2), f"*", curses.color_pair(1))
+                    stdscr.addstr(6, i + (mx // 2), f"*", curses.color_pair(1))
+                    stdscr.addstr(7, i + (mx // 2), f"*", curses.color_pair(1))
             except curses.error:
                 pass
         stdscr.refresh()
