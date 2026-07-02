@@ -163,6 +163,17 @@ def main(stdscr):
             ],
         ]
     )
+    for k in range(30):
+        xx = random.randint(1, 49)
+        yy = random.randint(1, 49)
+        if mapa[yy][xx] != 2:
+            if (
+                mapa[yy - 1][xx] == 1
+                or mapa[yy + 1][xx] == 1
+                or mapa[yy][xx - 1] == 1
+                or mapa[yy][xx + 1] == 1
+            ):
+                mapa[yy][xx] = 1
 
     shot_dist = 0
 
@@ -332,6 +343,7 @@ def main(stdscr):
         if mapa[int(dy)][int(dx)] == 2:
             mapa[int(dy)][int(dx)] = 0
             score += 1
+            curses.beep()
             enemy_x = random.randint(3, 47)
             enemy_y = random.randint(3, 47)
             mapa[enemy_y][enemy_x] = 2
@@ -353,10 +365,22 @@ def main(stdscr):
                 stdscr.addstr(int(y), int(x), "o", curses.color_pair(3))
             except curses.error:
                 pass
-        try:
-            stdscr.addstr(10, mx - 30, f"score: {score}", curses.color_pair(1))
-        except curses.error:
-            pass
+        c = 0
+        for i in range(50):
+            try:
+                if c < score * 5:
+                    c += 1
+                    stdscr.addstr(10, i + (mx // 2), f"*", curses.color_pair(2))
+                    stdscr.addstr(11, i + (mx // 2), f"*", curses.color_pair(2))
+                    stdscr.addstr(12, i + (mx // 2), f"*", curses.color_pair(2))
+                    stdscr.addstr(13, i + (mx // 2), f"*", curses.color_pair(2))
+                else:
+                    stdscr.addstr(10, i + (mx // 2), f"*", curses.color_pair(1))
+                    stdscr.addstr(11, i + (mx // 2), f"*", curses.color_pair(1))
+                    stdscr.addstr(12, i + (mx // 2), f"*", curses.color_pair(1))
+                    stdscr.addstr(13, i + (mx // 2), f"*", curses.color_pair(1))
+            except curses.error:
+                pass
         stdscr.refresh()
         time.sleep(0.03)
 
