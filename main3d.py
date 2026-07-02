@@ -23,15 +23,25 @@ def main(stdscr):
     curses.init_pair(9, curses.COLOR_BLACK, curses.COLOR_GREEN)
     curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
     curses.init_color(14, 0, 900, 0)
-    curses.init_color(15, 0, 700, 0)
-    curses.init_color(16, 0, 500, 0)
-    curses.init_color(17, 0, 300, 0)
-    curses.init_color(18, 0, 100, 0)
+    curses.init_color(15, 0, 800, 0)
+    curses.init_color(16, 0, 700, 0)
+    curses.init_color(17, 0, 600, 0)
+    curses.init_color(18, 0, 500, 0)
+    curses.init_color(40, 0, 400, 0)
+    curses.init_color(41, 0, 300, 0)
+    curses.init_color(42, 0, 200, 0)
+    curses.init_color(43, 0, 100, 0)
+    curses.init_color(44, 0, 50, 0)
     curses.init_pair(4, 14, curses.COLOR_BLACK)
     curses.init_pair(5, 15, curses.COLOR_BLACK)
     curses.init_pair(6, 16, curses.COLOR_BLACK)
     curses.init_pair(7, 17, curses.COLOR_BLACK)
     curses.init_pair(8, 18, curses.COLOR_BLACK)
+    curses.init_pair(30, 40, curses.COLOR_BLACK)
+    curses.init_pair(31, 41, curses.COLOR_BLACK)
+    curses.init_pair(32, 42, curses.COLOR_BLACK)
+    curses.init_pair(33, 43, curses.COLOR_BLACK)
+    curses.init_pair(34, 44, curses.COLOR_BLACK)
     curses.init_color(19, 900, 0, 0)
     curses.init_color(20, 700, 0, 0)
     curses.init_color(21, 500, 0, 0)
@@ -163,9 +173,14 @@ def main(stdscr):
             ],
         ]
     )
-    for k in range(30):
-        xx = random.randint(1, 49)
-        yy = random.randint(1, 49)
+    wall_number = 0
+    for ii in range(5):
+        xx = random.randint(6, 42)
+        yy = random.randint(6, 42)
+        mapa[yy][xx] = 1
+    while True:
+        xx = random.randint(6, 42)
+        yy = random.randint(6, 42)
         if mapa[yy][xx] != 2:
             if (
                 mapa[yy - 1][xx] == 1
@@ -174,6 +189,9 @@ def main(stdscr):
                 or mapa[yy][xx + 1] == 1
             ):
                 mapa[yy][xx] = 1
+                wall_number += 1
+        if wall_number == 45:
+            break
 
     shot_dist = 0
 
@@ -217,6 +235,8 @@ def main(stdscr):
             ra = (pa - vf / 2) + (ix / mx) * vf
             dist = 0
             while True:
+                old_cx = px + math.cos(ra) * dist
+                old_cy = py + math.sin(ra) * dist
                 dist += 0.1
                 cx = px + math.cos(ra) * dist
                 cy = py + math.sin(ra) * dist
@@ -224,6 +244,13 @@ def main(stdscr):
                     break
                 if mapa[int(cy)][int(cx)] == 1:
                     hit = 1
+                    color_dist = dist
+                    if int(old_cx) != int(cx):
+                        side = 0
+                    else:
+                        side = 1
+                    if side == 1:
+                        color_dist += 5
                     break
 
             dist = dist * math.cos(ra - pa)
@@ -238,16 +265,26 @@ def main(stdscr):
                 end = my - 1
             if hit == 1:
                 ch = "┼"
-                if dist <= 10 and dist >= 0:
+                if color_dist <= 5 and color_dist >= 0:
                     color = curses.color_pair(4)
-                elif dist > 10 and dist <= 20:
+                elif color_dist > 5 and color_dist <= 10:
                     color = curses.color_pair(5)
-                elif dist > 20 and dist <= 30:
+                elif color_dist > 10 and color_dist <= 15:
                     color = curses.color_pair(6)
-                elif dist > 30 and dist <= 40:
+                elif color_dist > 15 and color_dist <= 20:
                     color = curses.color_pair(7)
-                elif dist > 40:
+                elif color_dist > 20 and color_dist <= 25:
                     color = curses.color_pair(8)
+                elif color_dist > 25 and color_dist <= 30:
+                    color = curses.color_pair(30)
+                elif color_dist > 30 and color_dist <= 35:
+                    color = curses.color_pair(31)
+                elif color_dist > 35 and color_dist <= 40:
+                    color = curses.color_pair(32)
+                elif color_dist > 40 and color_dist <= 45:
+                    color = curses.color_pair(33)
+                elif color_dist > 45:
+                    color = curses.color_pair(34)
 
             if hit != 0:
                 if hit == 1:
@@ -300,6 +337,8 @@ def main(stdscr):
 
                 if mapa[int(oy)][int(ox)] == 2:
                     hit = 2
+                    break
+                if mapa[int(oy)][int(ox)] == 1:
                     break
                 stdscr.addstr(int(oy), int(ox), ".", curses.color_pair(9))
 
