@@ -47,6 +47,7 @@ def main(stdscr):
     py = 25
     pa = 0
     vf = math.pi / 3
+    score = 0
 
     enemy_x = random.randint(3, 47)
     enemy_y = random.randint(3, 47)
@@ -330,6 +331,7 @@ def main(stdscr):
             shot_dist += 0.1
         if mapa[int(dy)][int(dx)] == 2:
             mapa[int(dy)][int(dx)] = 0
+            score += 1
             enemy_x = random.randint(3, 47)
             enemy_y = random.randint(3, 47)
             mapa[enemy_y][enemy_x] = 2
@@ -351,6 +353,10 @@ def main(stdscr):
                 stdscr.addstr(int(y), int(x), "o", curses.color_pair(3))
             except curses.error:
                 pass
+        try:
+            stdscr.addstr(10, mx - 30, f"score: {score}", curses.color_pair(1))
+        except curses.error:
+            pass
         stdscr.refresh()
         time.sleep(0.03)
 

@@ -14,6 +14,8 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 - Adjustable field of view
 - Perspective wall rendering
 - Radar
+- Floor shading
+- Score
 
 ## Controls
 
@@ -29,7 +31,8 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 
 - Python 3
 - Linux 
-- Architecture : x86_64
+- Architecture : `x86_64`
+Note: colors work best in `xterm` 
 ## Run
 
 ```bash
@@ -58,6 +61,5 @@ The world is stored as a 2D grid.
 - `2` = enemy
 
 ## Future improvements
-- Floor and ceiling shading
 - Textured walls
 - Sprites
