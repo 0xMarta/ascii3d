@@ -234,24 +234,47 @@ def main(stdscr):
             color = curses.color_pair(0)
             ra = (pa - vf / 2) + (ix / mx) * vf
             dist = 0
+            cos_ra = math.cos(ra)
+            sin_ra = math.sin(ra)
+            delta_dist_x = abs(1 / math.cos(ra)) if cos_ra != 0 else 1e30
+            delta_dist_y = abs(1 / math.sin(ra)) if sin_ra != 0 else 1e30
+            map_x = int(px)
+            map_y = int(py)
+
+            if math.cos(ra) < 0:
+                step_x = -1
+                side_dist_x = (px - int(px)) * delta_dist_x
+            else:
+                step_x = 1
+                side_dist_x = (int(px) + 1 - px) * delta_dist_x
+            if math.sin(ra) < 0:
+                step_y = -1
+                side_dist_y = (py - int(py)) * delta_dist_y
+            else:
+                step_y = 1
+                side_dist_y = (int(py) + 1 - py) * delta_dist_y
             while True:
-                old_cx = px + math.cos(ra) * dist
-                dist += 0.1
-                cx = px + math.cos(ra) * dist
-                cy = py + math.sin(ra) * dist
-                if int(cx) < 0 or int(cx) >= 50 or int(cy) < 0 or int(cy) >= 50:
-                    break
-                if mapa[int(cy)][int(cx)] == 1:
-                    hit = 1
-                    color_dist = dist
-                    if int(old_cx) != int(cx):
-                        side = 0
-                    else:
-                        side = 1
-                    if side == 1:
-                        color_dist += 5
+                if side_dist_x < side_dist_y:
+                    side_dist_x += delta_dist_x
+                    map_x += step_x
+                    side = 0
+                else:
+                    side_dist_y += delta_dist_y
+                    map_y += step_y
+                    side = 1
+                if map_x < 0 or map_x >= 50 or map_y < 0 or map_y >= 50:
                     break
 
+                if mapa[map_y][map_x] == 1:
+                    hit = 1
+                    break
+                color_dist = dist
+            if side == 0:
+                dist = side_dist_x - delta_dist_x
+                color_dist = dist + 10
+            else:
+                dist = side_dist_y - delta_dist_y
+                color_dist = dist
             dist = dist * math.cos(ra - pa)
             if dist < 0.1:
                 dist = 0.1
@@ -412,13 +435,13 @@ def main(stdscr):
             try:
                 if c < score * 5:
                     c += 1
-                    stdscr.addstr(5, i + (mx // 2), f"*", curses.color_pair(2))
-                    stdscr.addstr(6, i + (mx // 2), f"*", curses.color_pair(2))
-                    stdscr.addstr(7, i + (mx // 2), f"*", curses.color_pair(2))
+                    stdscr.addstr(5, i + int(mx // 4 * 3), f"*", curses.color_pair(2))
+                    stdscr.addstr(6, i + int(mx // 4 * 3), f"*", curses.color_pair(2))
+                    stdscr.addstr(7, i + int(mx // 4 * 3), f"*", curses.color_pair(2))
                 else:
-                    stdscr.addstr(5, i + (mx // 2), f"*", curses.color_pair(1))
-                    stdscr.addstr(6, i + (mx // 2), f"*", curses.color_pair(1))
-                    stdscr.addstr(7, i + (mx // 2), f"*", curses.color_pair(1))
+                    stdscr.addstr(5, i + int(mx // 4 * 3), f"*", curses.color_pair(1))
+                    stdscr.addstr(6, i + int(mx // 4 * 3), f"*", curses.color_pair(1))
+                    stdscr.addstr(7, i + int(mx // 4 * 3), f"*", curses.color_pair(1))
             except curses.error:
                 pass
         stdscr.refresh()

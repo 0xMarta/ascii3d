@@ -36,7 +36,14 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 - Python 3
 - Linux 
 - Architecture : `x86_64`
-Note: colors work best in `xterm` 
+
+
+## Important Notes
+
+* **Terminal Size:** Ensure your terminal window is maximized (not small), otherwise the 3D projection rendering may break.
+* **Colors:** This game is optimized for `xterm`. If colors look washed out or incorrect, make sure your terminal emulator supports 256 colors.
+* **Font Size:** For the best visual experience and sharper 3D graphics, use a smaller terminal font size.
+
 ## Run
 
 ```bash
