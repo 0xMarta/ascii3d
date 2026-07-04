@@ -7,6 +7,7 @@ import time
 def main(stdscr):
     curses.curs_set(0)
     stdscr.nodelay(True)
+    stdscr.keypad(True)
     curses.start_color()
     curses.init_color(31, 900, 900, 0)
     curses.init_color(32, 700, 700, 0)
@@ -58,7 +59,7 @@ def main(stdscr):
     pa = 0
     vf = math.pi / 3
     score = 0
-
+    horizon = my // 2
     enemy_x = random.randint(3, 47)
     enemy_y = random.randint(3, 47)
 
@@ -226,6 +227,10 @@ def main(stdscr):
             pa -= 0.1
         if key == ord("d"):
             pa += 0.1
+        if key == curses.KEY_UP:
+            horizon -= 2
+        if key == curses.KEY_DOWN:
+            horizon += 2
 
         stdscr.erase()
         for ix in range(mx):
@@ -279,8 +284,12 @@ def main(stdscr):
             if dist < 0.1:
                 dist = 0.1
             wall_h = int(my / dist)
-            start = int((my - wall_h) / 2)
-            end = int((my + wall_h) / 2)
+            start = horizon - wall_h // 2
+            end = horizon + wall_h // 2
+            if start < 0:
+                start = 0
+            if end >= my:
+                end = my - 1
             if start < 0:
                 start = 0
             if end >= my:
@@ -318,7 +327,7 @@ def main(stdscr):
                     for y_end in range(end, my):
                         h = 0.5
                         vfvert = vf * (my / mx) * 2.0
-                        delta_y = y_end - (my // 2)
+                        delta_y = y_end - horizon
                         beta = (delta_y / (my // 2)) * (vfvert / 2)
                         if beta <= 0 or math.isclose(beta, 0):
                             beta = 999.0
