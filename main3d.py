@@ -59,10 +59,11 @@ def main(stdscr):
     pa = 0
     vf = math.pi / 3
     score = 0
+    health = 100
+    timer = 0
     horizon = my // 2
     enemy_x = random.randint(3, 47)
     enemy_y = random.randint(3, 47)
-
     mapa = (
         [
             [
@@ -439,22 +440,119 @@ def main(stdscr):
                 stdscr.addstr(int(y), int(x), "o", curses.color_pair(3))
             except curses.error:
                 pass
+        if math.hypot(px - enemy_x, py - enemy_y) <= 2:
+            health -= 2
         c = 0
         for i in range(50):
             try:
                 if c < score * 5:
                     c += 1
-                    stdscr.addstr(5, i + int(mx // 4 * 3), f"*", curses.color_pair(2))
-                    stdscr.addstr(6, i + int(mx // 4 * 3), f"*", curses.color_pair(2))
-                    stdscr.addstr(7, i + int(mx // 4 * 3), f"*", curses.color_pair(2))
+                    stdscr.addstr(5, i + int(mx // 4 * 3), "*", curses.color_pair(2))
+                    stdscr.addstr(6, i + int(mx // 4 * 3), "*", curses.color_pair(2))
+                    stdscr.addstr(7, i + int(mx // 4 * 3), "*", curses.color_pair(2))
                 else:
-                    stdscr.addstr(5, i + int(mx // 4 * 3), f"*", curses.color_pair(1))
-                    stdscr.addstr(6, i + int(mx // 4 * 3), f"*", curses.color_pair(1))
-                    stdscr.addstr(7, i + int(mx // 4 * 3), f"*", curses.color_pair(1))
+                    stdscr.addstr(5, i + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(6, i + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(7, i + int(mx // 4 * 3), "*", curses.color_pair(1))
             except curses.error:
                 pass
+        hlth = 0
+        for n in range(40):
+            try:
+                if hlth < health * 40 // 100:
+                    stdscr.addstr(10, n + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(11, n + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(12, n + int(mx // 4 * 3), "*", curses.color_pair(1))
+                else:
+                    stdscr.addstr(10, n + int(mx // 4 * 3), "*", curses.color_pair(2))
+                    stdscr.addstr(11, n + int(mx // 4 * 3), "*", curses.color_pair(2))
+                    stdscr.addstr(12, n + int(mx // 4 * 3), "*", curses.color_pair(2))
+                hlth += 1
+            except curses.error:
+                pass
+        health = min(health + 1, 100)
+        if timer == 20:
+            mapa[enemy_y][enemy_x] = 0
+            if enemy_y > int(py):
+                enemy_y -= 1
+                timer = 0
+            elif enemy_y != py:
+                enemy_y += 1
+                timer = 0
+            if enemy_x > int(px):
+                enemy_x -= 1
+                timer = 0
+            elif enemy_x != int(px):
+                enemy_x += 1
+                timer = 0
+            mapa[enemy_y][enemy_x] = 2
+        timer += 1
+        if health <= 1:
+            stdscr.erase()
+            stdscr.refresh()
+            a = "        XXXXX        XXXX        X X    XX    XXXXXX            XXXXXX       X      X   XXXXXX   XXXXX "
+            b = "       X            XX  XX      X   X  X  X   X                X      X      X      X   X        X    X"
+            c = "      X     XX     X      X     X    XX   X   XXXXXX          X        X      X    X    XXXXXX   XXXXX "
+            d = "       X     X     XXXXXXXX     X         X   X                X      X        X  X     X        X  X  "
+            e = "        XXXXX      X      X     X         X   XXXXXX            XXXXXX          XX      XXXXXX   X   X "
+            try:
+                stdscr.addstr(
+                    my // 2 - 5, mx // 2 - len(a) // 2, a, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 4, mx // 2 - len(b) // 2, b, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 3, mx // 2 - len(c) // 2, c, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 2, mx // 2 - len(d) // 2, d, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 1, mx // 2 - len(e) // 2, e, curses.color_pair(1)
+                )
+            except curses.error:
+                pass
+            stdscr.refresh()
+            time.sleep(5)
+            return
+        if score == 10:
+            stdscr.erase()
+            stdscr.refresh()
+            f = "X   X       XXXXX     X      X          X       X    X       XX    X"
+            g = "X   X      X     X    X      X          X       X    X       X X   X"
+            k = " X X       X     X    X      X           X     X     X       X  X  X"
+            m = "  X        X     X    X      X           X  X  X     X       X   X X"
+            p = "  X         XXXXX      XXXXXX             XX XX      X       X    X "
+            try:
+                stdscr.addstr(
+                    my // 2 - 5, mx // 2 - len(f) // 2, f, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 4, mx // 2 - len(g) // 2, g, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 3, mx // 2 - len(k) // 2, k, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 2, mx // 2 - len(m) // 2, m, curses.color_pair(1)
+                )
+                stdscr.addstr(
+                    my // 2 - 1, mx // 2 - len(p) // 2, p, curses.color_pair(1)
+                )
+            except curses.error:
+                pass
+            stdscr.refresh()
+            time.sleep(5)
+            return
         stdscr.refresh()
         time.sleep(0.03)
 
 
 curses.wrapper(main)
+
+# "               XXXXX        XXXX        X X    XX    XXXXXX            XXXXXX       X      X   XXXXXX   XXXXX"
+# "              X            XX  XX      X   X  X  X   X                X      X      X      X   X        X    X"
+# "             X     XX     X      X     X    XX   X   XXXXXX          X        X      X    X    XXXXXX   XXXXX"
+# "              X     X     XXXXXXXX     X         X   X                X      X        X  X     X        X  X"
+# "                XXXXX     X      X     X         X   XXXXXX            XXXXXX          XX      XXXXXX   X   X"
