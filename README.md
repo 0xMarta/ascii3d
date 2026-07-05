@@ -5,7 +5,7 @@ A simple first-person 3D renderer written in Python using the `curses` library.
 The project uses a basic raycasting algorithm (similar to early games like Wolfenstein 3D) to render a 2D map as a pseudo-3D scene directly in the terminal.
 
 
-![gameplay](game.png)
+![gameplay](game_1.png)
 
 
 ## Features
@@ -30,6 +30,15 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 | A | Rotate left |
 | D | Rotate right |
 | Q | Quit |
+
+
+## How to play
+
+
+**How to win:** Kill 10 enemies to win
+**How to lose:** If an enemy is near you, your health will decrease, game over when it reaches 0
+**First bar is for score, second is for health**
+
 
 ## Requirements
 
