@@ -1,5 +1,7 @@
 import curses
+import json
 import math
+import os
 import random
 import time
 
@@ -73,11 +75,11 @@ def main(stdscr):
         stdscr.addstr(my // 4 - 3, mx // 2 - len(dd) // 2, dd, curses.color_pair(98))
         stdscr.addstr(my // 4 - 2, mx // 2 - len(ee) // 2, ee, curses.color_pair(98))
         stdscr.addstr(my // 4 - 1, mx // 2 - len(ff) // 2, ff, curses.color_pair(98))
-        line1 = "    HOW TO MOVE            QUIT"
-        line2 = "          W                    "
-        line3 = "       A     S               Q "
-        line4 = "          D                    "
-        line5 = "   CLICK ANYTHING TO START     "
+        line1 = "    HOW TO MOVE            QUIT      USE MEDKIT"
+        line2 = "          W                                    "
+        line3 = "       A     S               Q           E     "
+        line4 = "          D                                    "
+        line5 = "           CLICK ANYTHING TO START             "
 
         stdscr.addstr(
             my // 4 + 5, mx // 2 - len(line1) // 2, line1, curses.color_pair(98)
@@ -110,156 +112,165 @@ def main(stdscr):
     timer = 0
     horizon = my // 2
     timer_2 = 0
-    enemy_x = random.randint(3, 47)
-    enemy_y = random.randint(3, 47)
-    medkit_x = random.randint(3, 47)
-    medkit_y = random.randint(3, 47)
+    score_timer = time.time()
     medkit = 0
-    mapa = (
-        [
+    if not os.path.exists("./best_time_ascii_3d.txt"):
+        with open("best_time_ascii_3d.txt", "w") as f:
+            f.write("0")
+    if os.path.exists("./mapa_ascii_3d.json"):
+        with open("./mapa_ascii_3d.json") as mapa_file:
+            mapa = json.loads(mapa_file.read())
+    else:
+        mapa = (
             [
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-            ],
-        ]
-        + [[1] + [0] * 48 + [1] for _ in range(48)]
-        + [
-            [
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-            ],
-        ]
-    )
-    wall_number = 0
-    for ii in range(5):
-        xx = random.randint(6, 42)
-        yy = random.randint(6, 42)
-        mapa[yy][xx] = 1
-    while True:
-        xx = random.randint(6, 42)
-        yy = random.randint(6, 42)
-        if mapa[yy][xx] != 2:
-            if (
-                mapa[yy - 1][xx] == 1
-                or mapa[yy + 1][xx] == 1
-                or mapa[yy][xx - 1] == 1
-                or mapa[yy][xx + 1] == 1
-            ):
-                mapa[yy][xx] = 1
-                wall_number += 1
-        if wall_number == 45:
-            break
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                ],
+            ]
+            + [[1] + [0] * 48 + [1] for _ in range(48)]
+            + [
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                ],
+            ]
+        )
+        wall_number = 0
+        for ii in range(5):
+            xx = random.randint(6, 42)
+            yy = random.randint(6, 42)
+            mapa[yy][xx] = 1
+        while True:
+            xx = random.randint(6, 42)
+            yy = random.randint(6, 42)
+            if mapa[yy][xx] != 2:
+                if (
+                    mapa[yy - 1][xx] == 1
+                    or mapa[yy + 1][xx] == 1
+                    or mapa[yy][xx - 1] == 1
+                    or mapa[yy][xx + 1] == 1
+                ):
+                    mapa[yy][xx] = 1
+                    wall_number += 1
+            if wall_number == 45:
+                break
 
     shot_dist = 0
 
+    enemy_x = random.randint(3, len(mapa) - 3)
+    enemy_y = random.randint(3, len(mapa) - 3)
+    medkit_x = random.randint(3, len(mapa) - 3)
+    medkit_y = random.randint(3, len(mapa) - 3)
     mapa[enemy_y][enemy_x] = 2
     mapa[medkit_y][medkit_x] = 3
     while True:
+        timer_now = round(time.time() - score_timer)
         key = stdscr.getch()
         if key == ord("q"):
             break
         if key == ord("w"):
             if (
                 px + math.cos(pa) * 0.1 >= 0
-                and px + math.cos(pa) * 0.1 < 50
+                and px + math.cos(pa) * 0.1 < len(mapa)
                 and py + math.sin(pa) * 0.1 >= 0
-                and py + math.sin(pa) * 0.1 < 50
+                and py + math.sin(pa) * 0.1 < len(mapa)
                 and mapa[int(py + math.sin(pa) * 0.1)][int(px + math.cos(pa) * 0.1)]
                 == 0
             ):
@@ -268,9 +279,9 @@ def main(stdscr):
         if key == ord("s"):
             if (
                 py - math.sin(pa) * 0.1 >= 0
-                and py - math.sin(pa) * 0.1 < 50
+                and py - math.sin(pa) * 0.1 < len(mapa)
                 and px - math.cos(pa) * 0.1 >= 0
-                and px - math.cos(pa) * 0.1 < 50
+                and px - math.cos(pa) * 0.1 < len(mapa)
                 and mapa[int(py - math.sin(pa) * 0.1)][int(px - math.cos(pa) * 0.1)]
                 == 0
             ):
@@ -281,9 +292,9 @@ def main(stdscr):
         if key == ord("d"):
             pa += 0.1
         if key == curses.KEY_UP:
-            horizon -= 2
-        if key == curses.KEY_DOWN:
             horizon += 2
+        if key == curses.KEY_DOWN:
+            horizon -= 2
         if key == ord("e"):
             if medkit == 1:
                 health += 20
@@ -324,7 +335,7 @@ def main(stdscr):
                     side_dist_y += delta_dist_y
                     map_y += step_y
                     side = 1
-                if map_x < 0 or map_x >= 50 or map_y < 0 or map_y >= 50:
+                if map_x < 0 or map_x >= len(mapa) or map_y < 0 or map_y >= len(mapa):
                     break
 
                 if mapa[map_y][map_x] == 1:
@@ -421,7 +432,12 @@ def main(stdscr):
                 dist += 0.1
                 ox = px + math.cos(ra) * dist
                 oy = py + math.sin(ra) * dist
-                if int(ox) < 0 or int(ox) >= 50 or int(oy) < 0 or int(oy) >= 50:
+                if (
+                    int(ox) < 0
+                    or int(ox) >= len(mapa)
+                    or int(oy) < 0
+                    or int(oy) >= len(mapa)
+                ):
                     break
 
                 if mapa[int(oy)][int(ox)] == 1:
@@ -441,8 +457,8 @@ def main(stdscr):
             if dist < 0.1:
                 dist = 0.1
             wall_h = int(my / dist)
-            start = int((my - wall_h) / 2)
-            end = int((my + wall_h) / 2)
+            start = horizon - wall_h // 2
+            end = horizon + wall_h // 2
             if start < 0:
                 start = 0
             if end >= my:
@@ -479,7 +495,12 @@ def main(stdscr):
                 dist += 0.1
                 ox = px + math.cos(ra) * dist
                 oy = py + math.sin(ra) * dist
-                if int(ox) < 0 or int(ox) >= 50 or int(oy) < 0 or int(oy) >= 50:
+                if (
+                    int(ox) < 0
+                    or int(ox) >= len(mapa)
+                    or int(oy) < 0
+                    or int(oy) >= len(mapa)
+                ):
                     break
 
                 if mapa[int(oy)][int(ox)] == 1:
@@ -495,8 +516,8 @@ def main(stdscr):
             if dist < 0.1:
                 dist = 0.1
             wall_h = int(my / dist)
-            start = int((my - wall_h) / 2)
-            end = int((my + wall_h) / 2)
+            start = horizon - wall_h // 2
+            end = horizon + wall_h // 2
             if start < 0:
                 start = 0
             if end >= my:
@@ -517,14 +538,14 @@ def main(stdscr):
             mapa[int(dy)][int(dx)] = 0
             score += 1
             curses.beep()
-            enemy_x = random.randint(3, 47)
-            enemy_y = random.randint(3, 47)
+            enemy_x = random.randint(3, len(mapa) - 3)
+            enemy_y = random.randint(3, len(mapa) - 3)
             mapa[enemy_y][enemy_x] = 2
         if (
             dy < 0
-            or dy > 49
+            or dy > len(mapa) - 1
             or dx < 0
-            or dx > 49
+            or dx > len(mapa) - 1
             or mapa[int(dy)][int(dx)] == 1
             or mapa[int(dy)][int(dx)] == 2
         ):
@@ -545,37 +566,67 @@ def main(stdscr):
             try:
                 if c < score * 5:
                     c += 1
-                    stdscr.addstr(5, i + int(mx // 4 * 3), "*", curses.color_pair(2))
-                    stdscr.addstr(6, i + int(mx // 4 * 3), "*", curses.color_pair(2))
-                    stdscr.addstr(7, i + int(mx // 4 * 3), "*", curses.color_pair(2))
+                    stdscr.addstr(
+                        5, i + int(mx // 4 * 3) - 20, "*", curses.color_pair(2)
+                    )
+                    stdscr.addstr(
+                        6, i + int(mx // 4 * 3) - 20, "*", curses.color_pair(2)
+                    )
+                    stdscr.addstr(
+                        7, i + int(mx // 4 * 3) - 20, "*", curses.color_pair(2)
+                    )
                 else:
-                    stdscr.addstr(5, i + int(mx // 4 * 3), "*", curses.color_pair(1))
-                    stdscr.addstr(6, i + int(mx // 4 * 3), "*", curses.color_pair(1))
-                    stdscr.addstr(7, i + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(
+                        5, i + int(mx // 4 * 3) - 20, "*", curses.color_pair(1)
+                    )
+                    stdscr.addstr(
+                        6, i + int(mx // 4 * 3) - 20, "*", curses.color_pair(1)
+                    )
+                    stdscr.addstr(
+                        7, i + int(mx // 4 * 3) - 20, "*", curses.color_pair(1)
+                    )
             except curses.error:
                 pass
         hlth = 0
         for n in range(40):
             try:
                 if hlth < health * 40 // 100:
-                    stdscr.addstr(10, n + int(mx // 4 * 3), "*", curses.color_pair(2))
-                    stdscr.addstr(11, n + int(mx // 4 * 3), "*", curses.color_pair(2))
-                    stdscr.addstr(12, n + int(mx // 4 * 3), "*", curses.color_pair(2))
+                    stdscr.addstr(
+                        10, n + int(mx // 4 * 3) - 20, "*", curses.color_pair(2)
+                    )
+                    stdscr.addstr(
+                        11, n + int(mx // 4 * 3) - 20, "*", curses.color_pair(2)
+                    )
+                    stdscr.addstr(
+                        12, n + int(mx // 4 * 3) - 20, "*", curses.color_pair(2)
+                    )
                 else:
-                    stdscr.addstr(10, n + int(mx // 4 * 3), "*", curses.color_pair(1))
-                    stdscr.addstr(11, n + int(mx // 4 * 3), "*", curses.color_pair(1))
-                    stdscr.addstr(12, n + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(
+                        10, n + int(mx // 4 * 3) - 20, "*", curses.color_pair(1)
+                    )
+                    stdscr.addstr(
+                        11, n + int(mx // 4 * 3) - 20, "*", curses.color_pair(1)
+                    )
+                    stdscr.addstr(
+                        12, n + int(mx // 4 * 3) - 20, "*", curses.color_pair(1)
+                    )
                 hlth += 1
             except curses.error:
                 pass
         try:
             if health < 40:
                 stdscr.addstr(
-                    14, 20 + int(mx // 4 * 3), f"health: {health}", curses.color_pair(1)
+                    14,
+                    20 + int(mx // 4 * 3) - 20,
+                    f"health: {health}",
+                    curses.color_pair(1),
                 )
             else:
                 stdscr.addstr(
-                    14, 20 + int(mx // 4 * 3), f"health: {health}", curses.color_pair(2)
+                    14,
+                    20 + int(mx // 4 * 3) - 20,
+                    f"health: {health}",
+                    curses.color_pair(2),
                 )
         except curses.error:
             pass
@@ -628,6 +679,7 @@ def main(stdscr):
             time.sleep(5)
             return
         if score == 10:
+            timer_stop = timer_now
             stdscr.erase()
             stdscr.refresh()
             f = "X   X       XXXXX     X      X          X       X    X       XX    X"
@@ -654,27 +706,34 @@ def main(stdscr):
             except curses.error:
                 pass
             stdscr.refresh()
+            try:
+                with open("best_time_ascii_3d.txt", "r") as file:
+                    z = file.read()
+                if int(z) == 0 or int(z) > timer_stop:
+                    with open("best_time_ascii_3d.txt", "w") as file2:
+                        file2.write(f"{timer_stop}")
+            except Exception:
+                pass
             time.sleep(5)
             return
         if math.hypot(px - medkit_x, py - medkit_y) <= 2:
             medkit = 1
             mapa[medkit_y][medkit_x] = 0
-            medkit_x = random.randint(3, 47)
-            medkit_y = random.randint(3, 47)
+            medkit_x = random.randint(3, len(mapa) - 3)
+            medkit_y = random.randint(3, len(mapa) - 3)
             mapa[medkit_y][medkit_x] = 3
         try:
             stdscr.addstr(my // 10, mx // 10, f"medkit: {medkit}/1")
         except curses.error:
             pass
         timer_2 += 1
+        try:
+            stdscr.addstr(my // 10, mx // 2, f"{timer_now}", curses.color_pair(3))
+        except curses.error:
+            pass
         stdscr.refresh()
+
         time.sleep(0.03)
 
 
 curses.wrapper(main)
-
-# "               XXXXX        XXXX        X X    XX    XXXXXX            XXXXXX       X      X   XXXXXX   XXXXX"
-# "              X            XX  XX      X   X  X  X   X                X      X      X      X   X        X    X"
-# "             X     XX     X      X     X    XX   X   XXXXXX          X        X      X    X    XXXXXX   XXXXX"
-# "              X     X     XXXXXXXX     X         X   X                X      X        X  X     X        X  X"
-# "                XXXXX     X      X     X         X   XXXXXX            XXXXXX          XX      XXXXXX   X   X"

@@ -21,6 +21,9 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 - Floor shading
 - Score and enemy respawn system
 - Medkit and health system
+- Timer
+- Best time is stored in file 
+- Map loading
 
 ## Controls
 
@@ -86,7 +89,6 @@ The world is stored as a 2D grid.
 - `0` = empty space
 - `2` = enemy
 
+**Map can be any list of lists with 0 and 1 and you can make your own in file `mapa_ascii_3d.json`, map can be as long as you want but it have to have same number of columns and rows, one list is one row, file named `mapa_ascii_3d.json` is template, if game wouldn't find any map with that name , map will be generated**
+
 ## Future improvements
-* **Time Attack Mode** – adding a timer for speedrunning and time-based challenges.
-* **High Score System** – saving the best scores and completion times to an external file.
-* **External Map Loading** – loading new levels directly from separate `.txt` files.
