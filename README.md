@@ -35,6 +35,9 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 | D | Rotate right |
 | Q | Quit |
 | E | Use medkit |
+| ↑ | Rotate up |
+| ↓ | Rotate down |
+
 
 
 ## How to play
