@@ -109,8 +109,12 @@ def main(stdscr):
     health = 100
     timer = 0
     horizon = my // 2
+    timer_2 = 0
     enemy_x = random.randint(3, 47)
     enemy_y = random.randint(3, 47)
+    medkit_x = random.randint(3, 47)
+    medkit_y = random.randint(3, 47)
+    medkit = 0
     mapa = (
         [
             [
@@ -245,6 +249,7 @@ def main(stdscr):
     shot_dist = 0
 
     mapa[enemy_y][enemy_x] = 2
+    mapa[medkit_y][medkit_x] = 3
     while True:
         key = stdscr.getch()
         if key == ord("q"):
@@ -279,6 +284,10 @@ def main(stdscr):
             horizon -= 2
         if key == curses.KEY_DOWN:
             horizon += 2
+        if key == ord("e"):
+            if medkit == 1:
+                health += 20
+                medkit = 0
 
         stdscr.erase()
         for ix in range(mx):
@@ -415,10 +424,12 @@ def main(stdscr):
                 if int(ox) < 0 or int(ox) >= 50 or int(oy) < 0 or int(oy) >= 50:
                     break
 
+                if mapa[int(oy)][int(ox)] == 1:
+                    break
                 if mapa[int(oy)][int(ox)] == 2:
                     hit = 2
                     break
-                if mapa[int(oy)][int(ox)] == 1:
+                if mapa[int(oy)][int(ox)] == 3:
                     break
                 try:
                     stdscr.addstr(int(oy), int(ox), ".", curses.color_pair(9))
@@ -458,6 +469,46 @@ def main(stdscr):
                     except curses.error:
                         pass
 
+        for indie in range(mx):
+            hit = 0
+            ch = " "
+            color = curses.color_pair(0)
+            ra = (pa - vf / 2) + (indie / mx) * vf
+            dist = 0
+            while True:
+                dist += 0.1
+                ox = px + math.cos(ra) * dist
+                oy = py + math.sin(ra) * dist
+                if int(ox) < 0 or int(ox) >= 50 or int(oy) < 0 or int(oy) >= 50:
+                    break
+
+                if mapa[int(oy)][int(ox)] == 1:
+                    break
+                if mapa[int(oy)][int(ox)] == 2:
+                    break
+                if mapa[int(oy)][int(ox)] == 3:
+                    hit = 3
+                    break
+
+            dist = dist * math.cos(ra - pa)
+
+            if dist < 0.1:
+                dist = 0.1
+            wall_h = int(my / dist)
+            start = int((my - wall_h) / 2)
+            end = int((my + wall_h) / 2)
+            if start < 0:
+                start = 0
+            if end >= my:
+                end = my - 1
+            if hit == 3:
+                ch = "░"
+                color = curses.color_pair(3)
+                for yyy in range(start, end):
+                    try:
+                        stdscr.addch(yyy, indie, ch, color)
+                    except curses.error:
+                        pass
         dx = px + math.cos(pa) * shot_dist
         dy = py + math.sin(pa) * shot_dist
         if mapa[int(dy)][int(dx)] != 1 and mapa[int(dy)][int(dx)] != 2:
@@ -507,17 +558,30 @@ def main(stdscr):
         for n in range(40):
             try:
                 if hlth < health * 40 // 100:
-                    stdscr.addstr(10, n + int(mx // 4 * 3), "*", curses.color_pair(1))
-                    stdscr.addstr(11, n + int(mx // 4 * 3), "*", curses.color_pair(1))
-                    stdscr.addstr(12, n + int(mx // 4 * 3), "*", curses.color_pair(1))
-                else:
                     stdscr.addstr(10, n + int(mx // 4 * 3), "*", curses.color_pair(2))
                     stdscr.addstr(11, n + int(mx // 4 * 3), "*", curses.color_pair(2))
                     stdscr.addstr(12, n + int(mx // 4 * 3), "*", curses.color_pair(2))
+                else:
+                    stdscr.addstr(10, n + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(11, n + int(mx // 4 * 3), "*", curses.color_pair(1))
+                    stdscr.addstr(12, n + int(mx // 4 * 3), "*", curses.color_pair(1))
                 hlth += 1
             except curses.error:
                 pass
-        health = min(health + 1, 100)
+        try:
+            if health < 40:
+                stdscr.addstr(
+                    14, 20 + int(mx // 4 * 3), f"health: {health}", curses.color_pair(1)
+                )
+            else:
+                stdscr.addstr(
+                    14, 20 + int(mx // 4 * 3), f"health: {health}", curses.color_pair(2)
+                )
+        except curses.error:
+            pass
+        if timer_2 == 2:
+            health = min(health + 1, 100)
+            timer_2 = 0
         if timer == 20:
             mapa[enemy_y][enemy_x] = 0
             if enemy_y > int(py):
@@ -592,6 +656,17 @@ def main(stdscr):
             stdscr.refresh()
             time.sleep(5)
             return
+        if math.hypot(px - medkit_x, py - medkit_y) <= 2:
+            medkit = 1
+            mapa[medkit_y][medkit_x] = 0
+            medkit_x = random.randint(3, 47)
+            medkit_y = random.randint(3, 47)
+            mapa[medkit_y][medkit_x] = 3
+        try:
+            stdscr.addstr(my // 10, mx // 10, f"medkit: {medkit}/1")
+        except curses.error:
+            pass
+        timer_2 += 1
         stdscr.refresh()
         time.sleep(0.03)
 

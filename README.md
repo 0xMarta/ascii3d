@@ -20,6 +20,7 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 - Radar
 - Floor shading
 - Score and enemy respawn system
+- Medkit and health system
 
 ## Controls
 
@@ -30,13 +31,14 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 | A | Rotate left |
 | D | Rotate right |
 | Q | Quit |
+| E | Use medkit |
 
 
 ## How to play
 
 
-**How to win:** Kill 10 enemies to win
-**How to lose:** If an enemy is near you, your health will decrease, game over when it reaches 0
+**How to win:** Kill 10 enemies to win, medkit appear as blue cubes: get near it to pick it up , 1 medkit gives you +20 health.
+**How to lose:** If an enemy is near you, your health will decrease, game over when it reaches 0.
 **First bar is for score, second is for health**
 
 
@@ -81,5 +83,6 @@ The world is stored as a 2D grid.
 - `2` = enemy
 
 ## Future improvements
-- Textured walls
-- Sprites
+* **Time Attack Mode** – adding a timer for speedrunning and time-based challenges.
+* **High Score System** – saving the best scores and completion times to an external file.
+* **External Map Loading** – loading new levels directly from separate `.txt` files.
