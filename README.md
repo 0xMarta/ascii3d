@@ -38,7 +38,11 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 
 
 **How to win:** Kill 10 enemies to win, medkit appear as blue cubes: get near it to pick it up , 1 medkit gives you +20 health.
+
+
 **How to lose:** If an enemy is near you, your health will decrease, game over when it reaches 0.
+
+
 **First bar is for score, second is for health**
 
 
