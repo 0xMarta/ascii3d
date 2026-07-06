@@ -23,6 +23,9 @@ def main(stdscr):
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.init_pair(9, curses.COLOR_BLACK, curses.COLOR_GREEN)
     curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(99, curses.COLOR_MAGENTA, curses.COLOR_CYAN)
+    curses.init_color(98, 541, 102, 75)
+    curses.init_pair(98, curses.COLOR_BLACK, 98)
     curses.init_color(14, 0, 900, 0)
     curses.init_color(15, 0, 800, 0)
     curses.init_color(16, 0, 700, 0)
@@ -54,6 +57,50 @@ def main(stdscr):
     curses.init_pair(13, 22, curses.COLOR_BLACK)
     curses.init_pair(14, 23, curses.COLOR_BLACK)
     my, mx = stdscr.getmaxyx()
+    while True:
+        time.sleep(0.5)
+        stdscr.erase()
+        stdscr.refresh()
+        aa = "      XX       XXXXX     XXXX    X   X       XXXX    XXX   "
+        bb = "     X  X     X         X        X   X           X   X  X  "
+        cc = "    X    X     XXXX     X        X   X       XXXX    X   X "
+        dd = "    XXXXXX         X    X        X   X           X   X   X "
+        ee = "    X    X         X    X        X   X           X   X  X  "
+        ff = "    X    X     XXXX      XXXX    X   X       XXXX    XXX   "
+        stdscr.addstr(my // 4 - 6, mx // 2 - len(aa) // 2, aa, curses.color_pair(98))
+        stdscr.addstr(my // 4 - 5, mx // 2 - len(bb) // 2, bb, curses.color_pair(98))
+        stdscr.addstr(my // 4 - 4, mx // 2 - len(cc) // 2, cc, curses.color_pair(98))
+        stdscr.addstr(my // 4 - 3, mx // 2 - len(dd) // 2, dd, curses.color_pair(98))
+        stdscr.addstr(my // 4 - 2, mx // 2 - len(ee) // 2, ee, curses.color_pair(98))
+        stdscr.addstr(my // 4 - 1, mx // 2 - len(ff) // 2, ff, curses.color_pair(98))
+        line1 = "    HOW TO MOVE            QUIT"
+        line2 = "          W                    "
+        line3 = "       A     S               Q "
+        line4 = "          D                    "
+        line5 = "   CLICK ANYTHING TO START     "
+
+        stdscr.addstr(
+            my // 4 + 5, mx // 2 - len(line1) // 2, line1, curses.color_pair(98)
+        )
+        stdscr.addstr(
+            my // 4 + 6, mx // 2 - len(line2) // 2, line2, curses.color_pair(98)
+        )
+        stdscr.addstr(
+            my // 4 + 7, mx // 2 - len(line3) // 2, line3, curses.color_pair(98)
+        )
+        stdscr.addstr(
+            my // 4 + 8, mx // 2 - len(line4) // 2, line4, curses.color_pair(98)
+        )
+        stdscr.addstr(
+            my // 4 + 9, mx // 2 - len(line5) // 2, line5, curses.color_pair(98)
+        )
+        x = stdscr.getch()
+
+        if x != -1:
+            stdscr.erase()
+            stdscr.refresh()
+            break
+
     px = 25
     py = 25
     pa = 0
