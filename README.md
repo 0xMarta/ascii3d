@@ -20,10 +20,11 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 - Radar
 - Floor shading
 - Score and enemy respawn system
-- Medkit and health system
+- Medkit, health and armor system
 - Timer
-- Best time is stored in file 
+- Best time is stored in file `best_time_ascii_3d.txt`
 - Map loading
+
 
 ## Controls
 
@@ -35,6 +36,7 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 | D | Rotate right |
 | Q | Quit |
 | E | Use medkit |
+| X | Shot |
 | ↑ | Rotate up |
 | ↓ | Rotate down |
 
@@ -45,8 +47,10 @@ The project uses a basic raycasting algorithm (similar to early games like Wolfe
 
 **How to win:** Kill 10 enemies to win, medkits appear as blue pickups: get close to one to pick it up, each medkit gives you +20 health.
 
-**Ammunition:** Yellow pickups are ammo, you can carry up to 8 ammo.
+**Ammunition:** Yellow pickups are ammo. Adds one bullet per pickup, you can carry up to 8 ammo.
 
+
+**Armor:** Protect you from taking demage, The orange pickups is armor.
 
 **How to lose:** If an enemy is near you, your health will decrease, the game is over when it reaches 0.
 
@@ -95,5 +99,3 @@ The world is stored as a 2D grid.
 - `2` = enemy
 
 **Map can be any list of lists with 0 and 1 and you can make your own in file `mapa_ascii_3d.json`, map can be as long as you want but it have to have same number of columns and rows, one list is one row, file named `mapa_ascii_3d.json` is template, if game wouldn't find any map with that name , map will be generated**
-
-## Future improvements
