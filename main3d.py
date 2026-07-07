@@ -26,6 +26,7 @@ def main(stdscr):
     curses.init_pair(9, curses.COLOR_BLACK, curses.COLOR_GREEN)
     curses.init_pair(3, curses.COLOR_BLUE, curses.COLOR_BLACK)
     curses.init_pair(99, curses.COLOR_MAGENTA, curses.COLOR_CYAN)
+    curses.init_pair(88, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_color(98, 541, 102, 75)
     curses.init_pair(98, curses.COLOR_BLACK, 98)
     curses.init_color(14, 0, 900, 0)
@@ -59,6 +60,13 @@ def main(stdscr):
     curses.init_pair(13, 22, curses.COLOR_BLACK)
     curses.init_pair(14, 23, curses.COLOR_BLACK)
     my, mx = stdscr.getmaxyx()
+
+    if not os.path.exists("./best_time_ascii_3d.txt"):
+        with open("best_time_ascii_3d.txt", "w") as f:
+            f.write("0")
+    else:
+        with open("best_time_ascii_3d.txt", "r") as f:
+            best_time = f.read()
     while True:
         time.sleep(0.5)
         stdscr.erase()
@@ -75,27 +83,39 @@ def main(stdscr):
         stdscr.addstr(my // 4 - 3, mx // 2 - len(dd) // 2, dd, curses.color_pair(98))
         stdscr.addstr(my // 4 - 2, mx // 2 - len(ee) // 2, ee, curses.color_pair(98))
         stdscr.addstr(my // 4 - 1, mx // 2 - len(ff) // 2, ff, curses.color_pair(98))
-        line1 = "    HOW TO MOVE            QUIT      USE MEDKIT"
-        line2 = "          W                                    "
-        line3 = "       A     S               Q           E     "
-        line4 = "          D                                    "
-        line5 = "           CLICK ANYTHING TO START             "
-
-        stdscr.addstr(
-            my // 4 + 5, mx // 2 - len(line1) // 2, line1, curses.color_pair(98)
-        )
-        stdscr.addstr(
-            my // 4 + 6, mx // 2 - len(line2) // 2, line2, curses.color_pair(98)
-        )
-        stdscr.addstr(
-            my // 4 + 7, mx // 2 - len(line3) // 2, line3, curses.color_pair(98)
-        )
-        stdscr.addstr(
-            my // 4 + 8, mx // 2 - len(line4) // 2, line4, curses.color_pair(98)
-        )
-        stdscr.addstr(
-            my // 4 + 9, mx // 2 - len(line5) // 2, line5, curses.color_pair(98)
-        )
+        line1 = "    HOW TO MOVE            QUIT      USE MEDKIT       SHOT"
+        line2 = "          W                                               "
+        line3 = "       A     S               Q           E               X"
+        line4 = "          D                                               "
+        line5 = "              CLICK ANYTHING TO START                     "
+        if not os.path.exists("./best_time_ascii_3d.txt"):
+            with open("best_time_ascii_3d.txt", "w") as f:
+                f.write("0")
+        else:
+            with open("best_time_ascii_3d.txt", "r") as f:
+                best_time = f.read()
+                try:
+                    stdscr.addstr(my // 10, mx // 10, f"best time: {best_time}s")
+                except curses.error:
+                    pass
+        try:
+            stdscr.addstr(
+                my // 4 + 5, mx // 2 - len(line1) // 2, line1, curses.color_pair(98)
+            )
+            stdscr.addstr(
+                my // 4 + 6, mx // 2 - len(line2) // 2, line2, curses.color_pair(98)
+            )
+            stdscr.addstr(
+                my // 4 + 7, mx // 2 - len(line3) // 2, line3, curses.color_pair(98)
+            )
+            stdscr.addstr(
+                my // 4 + 8, mx // 2 - len(line4) // 2, line4, curses.color_pair(98)
+            )
+            stdscr.addstr(
+                my // 4 + 9, mx // 2 - len(line5) // 2, line5, curses.color_pair(98)
+            )
+        except curses.error:
+            pass
         x = stdscr.getch()
 
         if x != -1:
@@ -114,9 +134,7 @@ def main(stdscr):
     timer_2 = 0
     score_timer = time.time()
     medkit = 0
-    if not os.path.exists("./best_time_ascii_3d.txt"):
-        with open("best_time_ascii_3d.txt", "w") as f:
-            f.write("0")
+    comeback = 0
     if os.path.exists("./mapa_ascii_3d.json"):
         with open("./mapa_ascii_3d.json") as mapa_file:
             mapa = json.loads(mapa_file.read())
@@ -232,6 +250,7 @@ def main(stdscr):
                 ],
             ]
         )
+
         wall_number = 0
         for ii in range(5):
             xx = random.randint(6, 42)
@@ -251,18 +270,26 @@ def main(stdscr):
                     wall_number += 1
             if wall_number == 45:
                 break
+    mapa = [[1 if cell >= 1 else 0 for cell in row] for row in mapa]
 
     shot_dist = 0
-
+    ammo = 5
     enemy_x = random.randint(3, len(mapa) - 3)
     enemy_y = random.randint(3, len(mapa) - 3)
     medkit_x = random.randint(3, len(mapa) - 3)
     medkit_y = random.randint(3, len(mapa) - 3)
+    ammo_x = random.randint(3, len(mapa) - 3)
+    ammo_y = random.randint(3, len(mapa) - 3)
+    shot = False
     mapa[enemy_y][enemy_x] = 2
     mapa[medkit_y][medkit_x] = 3
+    mapa[ammo_y][ammo_x] = 4
     while True:
         timer_now = round(time.time() - score_timer)
         key = stdscr.getch()
+        if comeback == 1:
+            horizon -= 2
+            comeback = 0
         if key == ord("q"):
             break
         if key == ord("w"):
@@ -299,6 +326,10 @@ def main(stdscr):
             if medkit == 1:
                 health += 20
                 medkit = 0
+        if key == ord("x"):
+            shot = True
+            horizon += 2
+            comeback = 1
 
         stdscr.erase()
         for ix in range(mx):
@@ -447,6 +478,8 @@ def main(stdscr):
                     break
                 if mapa[int(oy)][int(ox)] == 3:
                     break
+                if mapa[int(oy)][int(ox)] == 4:
+                    break
                 try:
                     stdscr.addstr(int(oy), int(ox), ".", curses.color_pair(9))
                 except curses.error:
@@ -510,6 +543,9 @@ def main(stdscr):
                 if mapa[int(oy)][int(ox)] == 3:
                     hit = 3
                     break
+                if mapa[int(oy)][int(ox)] == 4:
+                    hit = 4
+                    break
 
             dist = dist * math.cos(ra - pa)
 
@@ -530,37 +566,55 @@ def main(stdscr):
                         stdscr.addch(yyy, indie, ch, color)
                     except curses.error:
                         pass
-        dx = px + math.cos(pa) * shot_dist
-        dy = py + math.sin(pa) * shot_dist
-        if mapa[int(dy)][int(dx)] != 1 and mapa[int(dy)][int(dx)] != 2:
-            shot_dist += 0.1
-        if mapa[int(dy)][int(dx)] == 2:
-            mapa[int(dy)][int(dx)] = 0
-            score += 1
-            curses.beep()
-            enemy_x = random.randint(3, len(mapa) - 3)
-            enemy_y = random.randint(3, len(mapa) - 3)
-            mapa[enemy_y][enemy_x] = 2
-        if (
-            dy < 0
-            or dy > len(mapa) - 1
-            or dx < 0
-            or dx > len(mapa) - 1
-            or mapa[int(dy)][int(dx)] == 1
-            or mapa[int(dy)][int(dx)] == 2
-        ):
-            shot_dist = 0
-        x = mx / 2
-        y = my - shot_dist * 5
-        if y < my // 2:
-            shot_dist = 0
-        else:
-            try:
-                stdscr.addstr(int(y), int(x), "o", curses.color_pair(3))
-            except curses.error:
-                pass
+            elif hit == 4:
+                ch = "░"
+                color = curses.color_pair(88)
+                for iii in range(start, end):
+                    try:
+                        stdscr.addch(iii, indie, ch, color)
+                    except curses.error:
+                        pass
+        if ammo <= 8 and ammo >= 1 and shot:
+            dx = px + math.cos(pa) * shot_dist
+            dy = py + math.sin(pa) * shot_dist
+            if mapa[int(dy)][int(dx)] != 1 and mapa[int(dy)][int(dx)] != 2:
+                shot_dist += 0.1
+            if mapa[int(dy)][int(dx)] == 2:
+                mapa[int(dy)][int(dx)] = 0
+                score += 1
+                curses.beep()
+                enemy_x = random.randint(3, len(mapa) - 3)
+                enemy_y = random.randint(3, len(mapa) - 3)
+                mapa[enemy_y][enemy_x] = 2
+            if (
+                dy < 0
+                or dy > len(mapa) - 1
+                or dx < 0
+                or dx > len(mapa) - 1
+                or mapa[int(dy)][int(dx)] == 1
+                or mapa[int(dy)][int(dx)] == 2
+            ):
+                shot_dist = 0
+            x = mx / 2
+            y = my - shot_dist * 5
+            if y < my // 2:
+                shot_dist = 0
+                ammo -= 1
+                shot = False
+            else:
+                try:
+                    stdscr.addstr(int(y), int(x), "o", curses.color_pair(3))
+                except curses.error:
+                    pass
         if math.hypot(px - enemy_x, py - enemy_y) <= 2:
             health -= 2
+        if math.hypot(px - ammo_x, py - ammo_y) <= 2:
+            ammo = min(ammo + 1, 8)
+            mapa[ammo_y][ammo_x] = 0
+            ammo_y = random.randint(3, len(mapa) - 3)
+            ammo_x = random.randint(3, len(mapa) - 3)
+            mapa[ammo_y][ammo_x] = 4
+
         c = 0
         for i in range(50):
             try:
@@ -731,8 +785,46 @@ def main(stdscr):
             stdscr.addstr(my // 10, mx // 2, f"{timer_now}", curses.color_pair(3))
         except curses.error:
             pass
-        stdscr.refresh()
+        try:
+            stdscr.addstr(my // 10 - 1, mx // 2, f"ammo: {ammo}/8")
+        except curses.error:
+            pass
+        try:
+            line01 = "   XXXXXXXXX    "
+            line02 = "       XX   XX  "
+            line03 = "         XXXXX  "
+            line04 = "            XX  "
+            line05 = "            XX  "
+            stdscr.addstr(my - my // 10 - 5, mx - mx // 4, line01)
+            stdscr.addstr(my - my // 10 - 4, mx - mx // 4, line02)
+            stdscr.addstr(my - my // 10 - 3, mx - mx // 4, line03)
+            stdscr.addstr(my - my // 10 - 2, mx - mx // 4, line04)
+            stdscr.addstr(my - my // 10 - 1, mx - mx // 4, line05)
+        except curses.error:
+            pass
+        if health <= 40:
+            for loop in range(mx * 15 // 100):
+                for loop2 in range(my):
+                    try:
+                        stdscr.addstr(
+                            loop2,
+                            loop,
+                            " ",
+                        )
+                    except curses.error:
+                        pass
+            for loop in range(mx - 1, mx - (mx * 15 // 100), -1):
+                for loop2 in range(my):
+                    try:
+                        stdscr.addstr(
+                            loop2,
+                            loop,
+                            " ",
+                        )
+                    except curses.error:
+                        pass
 
+        stdscr.refresh()
         time.sleep(0.03)
 
 
