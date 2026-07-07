@@ -487,6 +487,9 @@ def main(stdscr):
                     break
                 if mapa[int(oy)][int(ox)] == 4:
                     break
+
+                if mapa[int(oy)][int(ox)] == 5:
+                    break
                 try:
                     stdscr.addstr(int(oy), int(ox), ".", curses.color_pair(9))
                 except curses.error:
