@@ -53,6 +53,8 @@ def main(stdscr):
     curses.init_color(20, 700, 0, 0)
     curses.init_color(21, 500, 0, 0)
     curses.init_color(22, 300, 0, 0)
+    curses.init_color(67, 1000, 498, 0)
+    curses.init_pair(67, 67, curses.COLOR_BLACK)
     curses.init_color(23, 100, 0, 0)
     curses.init_pair(10, 19, curses.COLOR_BLACK)
     curses.init_pair(11, 20, curses.COLOR_BLACK)
@@ -280,10 +282,15 @@ def main(stdscr):
     medkit_y = random.randint(3, len(mapa) - 3)
     ammo_x = random.randint(3, len(mapa) - 3)
     ammo_y = random.randint(3, len(mapa) - 3)
+    armor_x = random.randint(3, len(mapa) - 3)
+    armor_y = random.randint(3, len(mapa) - 3)
+    armor = 0
+    armor_timer = 0
     shot = False
     mapa[enemy_y][enemy_x] = 2
     mapa[medkit_y][medkit_x] = 3
     mapa[ammo_y][ammo_x] = 4
+    mapa[armor_y][armor_x] = 5
     while True:
         timer_now = round(time.time() - score_timer)
         key = stdscr.getch()
@@ -546,6 +553,9 @@ def main(stdscr):
                 if mapa[int(oy)][int(ox)] == 4:
                     hit = 4
                     break
+                if mapa[int(oy)][int(ox)] == 5:
+                    hit = 5
+                    break
 
             dist = dist * math.cos(ra - pa)
 
@@ -572,6 +582,14 @@ def main(stdscr):
                 for iii in range(start, end):
                     try:
                         stdscr.addch(iii, indie, ch, color)
+                    except curses.error:
+                        pass
+            elif hit == 5:
+                ch = "░"
+                color = curses.color_pair(67)
+                for u in range(start, end):
+                    try:
+                        stdscr.addch(u, indie, ch, color)
                     except curses.error:
                         pass
         if ammo <= 8 and ammo >= 1 and shot:
@@ -607,7 +625,8 @@ def main(stdscr):
                 except curses.error:
                     pass
         if math.hypot(px - enemy_x, py - enemy_y) <= 2:
-            health -= 2
+            if not armor:
+                health -= 2
         if math.hypot(px - ammo_x, py - ammo_y) <= 2:
             ammo = min(ammo + 1, 8)
             mapa[ammo_y][ammo_x] = 0
@@ -823,7 +842,21 @@ def main(stdscr):
                         )
                     except curses.error:
                         pass
-
+        if math.hypot(px - armor_x, py - armor_y) <= 2:
+            armor = 1
+            mapa[armor_y][armor_x] = 0
+            armor_y = random.randint(3, len(mapa) - 3)
+            armor_x = random.randint(3, len(mapa) - 3)
+            mapa[armor_y][armor_x] = 5
+            armor_timer = 300
+        if armor:
+            armor_timer = max(0, armor_timer - 1)
+            try:
+                stdscr.addstr(my // 10 + 5, mx // 2, f"armor timer: {armor_timer}")
+            except curses.error:
+                pass
+        if armor_timer <= 1:
+            armor = 0
         stdscr.refresh()
         time.sleep(0.03)
 
