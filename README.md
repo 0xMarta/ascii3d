@@ -99,3 +99,30 @@ The world is stored as a 2D grid.
 - `2` = enemy
 
 **Map can be any list of lists with 0 and 1 and you can make your own in file `mapa_ascii_3d.json`, map can be as long as you want but it have to have same number of columns and rows, one list is one row, file named `mapa_ascii_3d.json` is template, if game wouldn't find any map with that name , map will be generated**
+
+
+## Troubleshooting
+
+### Game fails with `ValueError: Color number is greater than COLORS-1 (7)`
+
+This means your terminal is running in 8-color mode. The game requires a terminal with 256-color support.
+
+Check your terminal color support:
+
+```bash
+tput colors
+```
+
+The output should be `256` or higher.
+
+If it shows only `8`, check that your terminal is configured for 256 colors:
+
+```bash
+export TERM=xterm-256color
+```
+
+or run the game directly with:
+
+```bash
+TERM=xterm-256color ./main3d
+```
