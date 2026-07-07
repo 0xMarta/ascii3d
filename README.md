@@ -124,5 +124,5 @@ export TERM=xterm-256color
 or run the game directly with:
 
 ```bash
-TERM=xterm-256color ./main3d
+TERM=xterm-256color  python3 main3d.py
 ```
